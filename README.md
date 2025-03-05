@@ -17,7 +17,7 @@ AutoWallpaper é um script Python que altera automaticamente os wallpapers do se
 ## Instalação
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/autowallpaper.git
+   git clone https://github.com/Lakentio/autowallpaper.git
    cd autowallpaper
    ```
 
