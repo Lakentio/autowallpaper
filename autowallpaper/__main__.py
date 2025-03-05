@@ -7,8 +7,7 @@ import time
 from datetime import datetime
 import argparse
 import threading
-import tkinter as tk
-from tkinter import filedialog, messagebox
+from PyQt5 import QtWidgets, QtGui
 
 CONFIG_FILE = os.path.expanduser("~/.config/autowallpaper/wallpaper_config.json")
 
@@ -85,51 +84,70 @@ def parse_args():
 def gui_config():
     config = {"manhã": None, "tarde": None, "noite": None, "intervalo": 10}
 
-    def selecionar_wallpaper(periodo):
-        caminho = filedialog.askopenfilename(
-            title=f"Selecione o wallpaper para {periodo}",
-            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")])
-        if caminho:
-            config[periodo] = caminho
-            labels[periodo]["text"] = caminho
+    class ConfigWindow(QtWidgets.QWidget):
+        def __init__(self):
+            super().__init__()
+            self.initUI()
 
-    def iniciar():
-        try:
-            config["intervalo"] = int(entry_intervalo.get())
-        except ValueError:
-            messagebox.showerror("Erro", "Intervalo deve ser um número inteiro")
-            return
+        def initUI(self):
+            self.setWindowTitle("Configuração do Wallpaper")
+            self.setGeometry(100, 100, 400, 300)
+            self.setStyleSheet("background-color: #f0f0f0;")
 
-        if not (config["manhã"] and config["tarde"] and config["noite"]):
-            messagebox.showerror("Erro", "Selecione todos os wallpapers (manhã, tarde e noite)")
-            return
-        root.destroy()
+            layout = QtWidgets.QVBoxLayout()
 
-    root = tk.Tk()
-    root.title("Configuração do Wallpaper")
+            self.labels = {}
+            for periodo in ["manhã", "tarde", "noite"]:
+                hbox = QtWidgets.QHBoxLayout()
+                btn = QtWidgets.QPushButton(f"Selecionar wallpaper para {periodo}")
+                btn.setStyleSheet("background-color: #4CAF50; color: white;")
+                btn.clicked.connect(lambda _, p=periodo: self.selecionar_wallpaper(p))
+                lbl = QtWidgets.QLabel("Nenhum arquivo selecionado")
+                lbl.setStyleSheet("background-color: #f0f0f0;")
+                hbox.addWidget(btn)
+                hbox.addWidget(lbl)
+                layout.addLayout(hbox)
+                self.labels[periodo] = lbl
 
-    labels = {}
-    for idx, periodo in enumerate(["manhã", "tarde", "noite"]):
-        frame = tk.Frame(root)
-        frame.pack(padx=10, pady=5, fill="x")
-        btn = tk.Button(frame, text=f"Selecionar wallpaper para {periodo}",
-                        command=lambda p=periodo: selecionar_wallpaper(p))
-        btn.pack(side="left")
-        lbl = tk.Label(frame, text="Nenhum arquivo selecionado", wraplength=300)
-        lbl.pack(side="left", padx=5)
-        labels[periodo] = lbl
+            hbox_intervalo = QtWidgets.QHBoxLayout()
+            lbl_intervalo = QtWidgets.QLabel("Intervalo (minutos):")
+            lbl_intervalo.setStyleSheet("background-color: #f0f0f0;")
+            self.entry_intervalo = QtWidgets.QLineEdit("10")
+            hbox_intervalo.addWidget(lbl_intervalo)
+            hbox_intervalo.addWidget(self.entry_intervalo)
+            layout.addLayout(hbox_intervalo)
 
-    frame_intervalo = tk.Frame(root)
-    frame_intervalo.pack(padx=10, pady=5, fill="x")
-    tk.Label(frame_intervalo, text="Intervalo (minutos):").pack(side="left")
-    entry_intervalo = tk.Entry(frame_intervalo, width=5)
-    entry_intervalo.insert(0, "10")
-    entry_intervalo.pack(side="left", padx=5)
+            btn_iniciar = QtWidgets.QPushButton("Iniciar")
+            btn_iniciar.setStyleSheet("background-color: #4CAF50; color: white;")
+            btn_iniciar.clicked.connect(self.iniciar)
+            layout.addWidget(btn_iniciar)
 
-    btn_iniciar = tk.Button(root, text="Iniciar", command=iniciar)
-    btn_iniciar.pack(pady=10)
+            self.setLayout(layout)
 
-    root.mainloop()
+        def selecionar_wallpaper(self, periodo):
+            caminho, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self, f"Selecione o wallpaper para {periodo}", "", 
+                "Todos os Arquivos de Imagem (*.png *.jpg *.jpeg *.bmp *.gif);;PNG (*.png);;JPEG (*.jpg *.jpeg);;BMP (*.bmp);;GIF (*.gif)")
+            if caminho:
+                config[periodo] = caminho
+                self.labels[periodo].setText(caminho)
+
+        def iniciar(self):
+            try:
+                config["intervalo"] = int(self.entry_intervalo.text())
+            except ValueError:
+                QtWidgets.QMessageBox.critical(self, "Erro", "Intervalo deve ser um número inteiro")
+                return
+
+            if not (config["manhã"] and config["tarde"] and config["noite"]):
+                QtWidgets.QMessageBox.critical(self, "Erro", "Selecione todos os wallpapers (manhã, tarde e noite)")
+                return
+            self.close()
+
+    app = QtWidgets.QApplication(sys.argv)
+    window = ConfigWindow()
+    window.show()
+    app.exec_()
     return config
 
 def load_config():
