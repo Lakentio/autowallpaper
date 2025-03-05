@@ -12,10 +12,6 @@ from tkinter import filedialog, messagebox
 CONFIG_FILE = "wallpaper_config.json"
 
 def set_wallpaper(path):
-    """
-    Define o wallpaper chamando o comando apropriado de acordo com o ambiente gráfico.
-    No XFCE, atualiza todas as propriedades que contenham "last-image".
-    """
     current_desktop = os.environ.get("XDG_CURRENT_DESKTOP", "").lower()
 
     if "xfce" in current_desktop:
@@ -51,13 +47,6 @@ for (i=0;i<Desktops.length;i++) {{
         subprocess.run(cmd)
 
 def get_wallpaper_for_time(wallpapers):
-    """
-    Retorna o wallpaper adequado com base no horário atual.
-    Critérios:
-      - Manhã: 06:00 <= hora < 12:00
-      - Tarde: 12:00 <= hora < 18:00
-      - Noite: 18:00 <= hora ou hora < 06:00
-    """
     agora = datetime.now().time()
     hora_manha = datetime.strptime("06:00", "%H:%M").time()
     hora_tarde = datetime.strptime("12:00", "%H:%M").time()
@@ -71,9 +60,6 @@ def get_wallpaper_for_time(wallpapers):
         return wallpapers.get("noite")
 
 def wallpaper_loop(wallpapers, intervalo):
-    """
-    Loop contínuo que muda o wallpaper conforme o horário a cada 'intervalo' minutos.
-    """
     while True:
         path = get_wallpaper_for_time(wallpapers)
         if path:
@@ -168,7 +154,6 @@ def main():
         config = load_config()
 
     if args.manha and args.tarde and args.noite and args.intervalo:
-        # Prioriza os argumentos de linha de comando
         config = {
             "manhã": args.manha,
             "tarde": args.tarde,
@@ -176,10 +161,8 @@ def main():
             "intervalo": args.intervalo
         }
     elif config is None:
-        # Se não houver configuração salva, usa a GUI para configurá-la
         config = gui_config()
     
-    # Salva a configuração para próximas execuções
     save_config(config)
 
     wallpapers = {
