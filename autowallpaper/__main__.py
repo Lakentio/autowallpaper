@@ -223,7 +223,7 @@ def main():
             print("Encerrando o script.")
     else:
         print("Executando em segundo plano...")
-        subprocess.Popen([sys.executable] + sys.argv + ["--foreground"])
+        subprocess.Popen([sys.executable] + sys.argv + ["--foreground"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         sys.exit()
 
 if __name__ == '__main__':
