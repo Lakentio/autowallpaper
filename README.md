@@ -1,46 +1,46 @@
 # AutoWallpaper
 
-AutoWallpaper é um script Python que altera automaticamente os wallpapers do seu ambiente de desktop (DE) com base no horário do dia (manhã, tarde e noite). Ele é compatível com diversos ambientes de desktop como XFCE, KDE, GNOME, MATE
+AutoWallpaper is a Python script that automatically changes your desktop environment (DE) wallpapers based on the time of day (morning, afternoon, and evening). It is compatible with various desktop environments such as XFCE, KDE, GNOME, MATE, and Budgie.
 
-## Recursos
-- Alterna automaticamente os wallpapers de acordo com o período do dia.
-- Configuração via terminal.
-- Salva as preferências do usuário.
-- Compatível com múltiplos ambientes de desktop.
-- Pode ser iniciado automaticamente na inicialização do sistema.
+## Features
+- Automatically changes wallpapers based on the time of day.
+- Configuration via terminal or GUI.
+- Saves user preferences.
+- Compatible with multiple desktop environments.
+- Can be started automatically at system startup.
 
-## Requisitos
-- Python 3.13 ou superior
-- `setuptools` e `pip` instalados
-- Um ambiente de desktop compatível (XFCE, KDE, GNOME, MATE, Budgie, etc.)
+## Requirements
+- Python 3.13 or higher
+- `setuptools` and `pip` installed
+- A compatible desktop environment (XFCE, KDE, GNOME, MATE, Budgie, etc.)
 
-## Instalação
-1. Clone o repositório:
+## Installation
+1. Clone the repository:
    ```bash
    git clone https://github.com/Lakentio/autowallpaper.git
    cd autowallpaper
    ```
 
-2. Instale o script globalmente:
+2. Install the script globally:
    ```bash
    sudo python3.13 -m pip install .
    ```
 
-3. Verifique se a instalação foi bem-sucedida:
+3. Verify the installation:
    ```bash
    autowallpaper --help
    ```
 
-## Configuração
+## Configuration
 ```bash
-autowallpaper --manha /caminho/para/wallpaper_manha.jpg autowallpaper --tarde /caminho/para/wallpaper_tarde.jpg autowallpaper --noite /caminho/para/wallpaper_noite.jpg --intervalo 10
+autowallpaper --morning /path/to/morning_wallpaper.jpg --afternoon /path/to/afternoon_wallpaper.jpg --evening /path/to/evening_wallpaper.jpg --interval 10
 ```
 
-## Remoção
-Para remover o AutoWallpaper do seu sistema:
+## Removal
+To remove AutoWallpaper from your system:
 ```bash
 sudo python3.13 -m pip uninstall autowallpaper
 ```
 
-## Contribuição
-Qualquer um pode pegar o código e melhorar, afinal até eu não achei que ele ficou bem estruturado.
+## Contribution
+Anyone can take the code and improve it, after all, even I didn't think it was well structured.
