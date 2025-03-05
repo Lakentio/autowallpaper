@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 import os
 import json
 import subprocess
@@ -9,7 +10,7 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
-CONFIG_FILE = "wallpaper_config.json"
+CONFIG_FILE = os.path.expanduser("~/.config/autowallpaper/wallpaper_config.json")
 
 def set_wallpaper(path):
     current_desktop = os.environ.get("XDG_CURRENT_DESKTOP", "").lower()
@@ -78,6 +79,7 @@ def parse_args():
     parser.add_argument("--noite", help="Caminho do wallpaper para a noite", type=str)
     parser.add_argument("--intervalo", help="Intervalo em minutos para troca de wallpaper", type=int)
     parser.add_argument("--reset", action="store_true", help="Força reconfiguração (ignora configuração salva)")
+    parser.add_argument("--daemon", action="store_true", help="Executa o script como um daemon em segundo plano")
     return parser.parse_args()
 
 def gui_config():
@@ -175,11 +177,20 @@ def main():
     print("Iniciando a troca automática de wallpapers...")
     start_wallpaper_switcher(wallpapers, intervalo)
 
-    try:
+    if args.daemon:
+        print("Executando em segundo plano...")
         while True:
             time.sleep(1)
-    except KeyboardInterrupt:
-        print("Encerrando o script.")
+    else:
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("Encerrando o script.")
 
 if __name__ == '__main__':
+    if '--daemon' in sys.argv:
+        pid = os.fork()
+        if pid > 0:
+            sys.exit()
     main()
