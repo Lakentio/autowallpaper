@@ -80,7 +80,7 @@ def parse_args():
     parser.add_argument("--noite", help="Caminho do wallpaper para a noite", type=str)
     parser.add_argument("--intervalo", help="Intervalo em minutos para troca de wallpaper", type=int)
     parser.add_argument("--reset", action="store_true", help="Força reconfiguração (ignora configuração salva)")
-    parser.add_argument("--daemon", action="store_true", help="Executa o script como um daemon em segundo plano")
+    parser.add_argument("--foreground", action="store_true", help="Executa o script em primeiro plano")
     return parser.parse_args()
 
 def gui_config():
@@ -214,20 +214,17 @@ def main():
     print("Iniciando a troca automática de wallpapers...")
     start_wallpaper_switcher(wallpapers, intervalo)
 
-    if args.daemon:
-        print("Executando em segundo plano...")
-        while True:
-            time.sleep(1)
-    else:
+    if args.foreground:
+        print("Executando em primeiro plano...")
         try:
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
             print("Encerrando o script.")
+    else:
+        print("Executando em segundo plano...")
+        subprocess.Popen([sys.executable] + sys.argv + ["--foreground"])
+        sys.exit()
 
 if __name__ == '__main__':
-    if '--daemon' in sys.argv:
-        pid = os.fork()
-        if pid > 0:
-            sys.exit()
     main()
